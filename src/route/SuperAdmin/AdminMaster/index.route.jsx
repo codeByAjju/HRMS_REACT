@@ -1,5 +1,7 @@
 import SuperAdminAccessRoute from "../../../routeControl/superAdminRoutMap";
 import { AdminMasters } from "../../../pages/SuperAdmin";
+import { Navbar } from "../../../components";
+import AdminDashboardLayout from "../../../layouts/Admin/index.layout";
 
 export default function route() {
   return [
@@ -10,8 +12,7 @@ export default function route() {
       private: true,
       adminAccess: true,
       commonRoute: false,
-      element: <h1>Admin Dashboard</h1>,
-      // element: <AdminDashboard />,
+      element: <AdminDashboardLayout />,
     },
     {
       path: SuperAdminAccessRoute.MASTERS.path,
