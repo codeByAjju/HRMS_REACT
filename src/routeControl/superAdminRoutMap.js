@@ -16,6 +16,9 @@ const SuperAdminAccessRoute = {
   ADMIN_PROFILE: {
     path: `${baseRoutes.superAdminBaseRoute}/profile`,
   },
+  ADMIN_CHARTS: {
+    path: `${baseRoutes.superAdminBaseRoute}/charts`,
+  },
   MASTERS: { path: `${baseRoutes.superAdminBaseRoute}/masters` },
   LOGIN: { path: `${baseRoutes.superAdminBaseRoute}/login` },
 };

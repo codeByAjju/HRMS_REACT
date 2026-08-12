@@ -18,8 +18,8 @@ function AdminSidebar() {
           </span>
 
           <span className="brand-copy">
-            <span className="brand-title">adminHMD</span>
-            <span className="brand-subtitle">Admin Template</span>
+            <span className="brand-title">PeopleDesk</span>
+            {/* <span className="brand-subtitle">Admin Template</span> */}
           </span>
         </a>
       </div>
@@ -64,12 +64,15 @@ function AdminSidebar() {
           <span className="nav-text">Profile</span>
         </NavLink>
 
-        <a className="nav-link" href="#charts">
+         <NavLink
+          className={navLinkClass}
+          to={SuperAdminAccessRoute.ADMIN_CHARTS.path}
+        >
           <span className="nav-icon">
             <i className="bi bi-bar-chart-line" aria-hidden="true"></i>
           </span>
           <span className="nav-text">Charts</span>
-        </a>
+        </NavLink>
 
         <a className="nav-link" href="#tables">
           <span className="nav-icon">
@@ -120,16 +123,6 @@ function AdminSidebar() {
           <span className="nav-text">Blank Page</span>
         </a>
       </nav>
-
-      <div className="sidebar-user">
-        <img
-          className="avatar-img avatar-md sidebar-user-avatar"
-          src="/assets/images/avatar/avatar.jpg"
-          alt="Admin Hasan"
-        />
-        <strong>Admin Hasan</strong>
-        <small>Active Workspace</small>
-      </div>
 
       <div className="sidebar-footer">
         <span className="status-dot"></span>

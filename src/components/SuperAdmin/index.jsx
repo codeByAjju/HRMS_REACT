@@ -8,3 +8,4 @@ export const DashboardContent = loadable(() => import("./DashboardContent/index"
 export const SuperAdminAddUser = loadable(() => import("../Form/SuperAdmin/AddUser/index"));
 export const UsersList = loadable(() => import("./UsersList/index"));
 export const AdminProfile = loadable(() => import("./AdminProfile/index"));
+export const AdminCharts = loadable(()=> import("./AdminCharts/index"));
