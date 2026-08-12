@@ -1,5 +1,5 @@
 import SuperAdminAccessRoute from "../../../routeControl/superAdminRoutMap";
-import { DashboardContent } from "../../../components/SuperAdmin/Dashboard";
+import { AdminProfile, DashboardContent } from "../../../components/SuperAdmin";
 import { SuperAdminAddUser } from "../../../components/SuperAdmin";
 export default function route() {
   return [
@@ -20,6 +20,15 @@ export default function route() {
       adminAccess: true,
       commonRoute: false,
       element: <SuperAdminAddUser />
+    },
+    {
+      path: SuperAdminAccessRoute.ADMIN_PROFILE.path,
+      key: SuperAdminAccessRoute.ADMIN_PROFILE.path,
+      name: "Admin Profile",
+      private: true,
+      adminAccess: true,
+      commonRoute: false,
+      element: <AdminProfile />
     },
   ];
 }

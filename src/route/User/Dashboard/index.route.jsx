@@ -1,5 +1,5 @@
 import routesMap from "../../../routeControl/userRoutMap";
-import { UserDashboard } from "../../../components/SuperAdmin/Dashboard";
+import { UserDashboard } from "../../../components/SuperAdmin";
 
 export default function route() {
   return [

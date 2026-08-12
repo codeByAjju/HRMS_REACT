@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import SuperAdminAccessRoute from "../../../../routeControl/superAdminRoutMap";
+import SuperAdminAccessRoute from "../../../routeControl/superAdminRoutMap";
 
 function AdminSidebar() {
   const navLinkClass = ({ isActive }) =>
@@ -54,12 +54,15 @@ function AdminSidebar() {
           </span>
           <span className="nav-text">Add User</span>
         </NavLink>
-        <a className="nav-link" href="#profile">
+        <NavLink
+          className={navLinkClass}
+          to={SuperAdminAccessRoute.ADMIN_PROFILE.path}
+        >
           <span className="nav-icon">
             <i className="bi bi-person-badge" aria-hidden="true"></i>
           </span>
           <span className="nav-text">Profile</span>
-        </a>
+        </NavLink>
 
         <a className="nav-link" href="#charts">
           <span className="nav-icon">
