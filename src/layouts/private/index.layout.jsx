@@ -1,10 +1,11 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import AppLayout from "../App/index.layout";
 import { useEffect, useState } from "react";
 
 function PrivateLayout() {
   const [redirectPath, setRedirectPath] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (redirectPath) {
@@ -12,11 +13,11 @@ function PrivateLayout() {
     }
   }, [navigate, redirectPath]);
 
-  return <>
+  return (
     <AppLayout setRedirectPath={setRedirectPath}>
       <Outlet />
     </AppLayout>
-  </>
+  );
 }
 
 export default PrivateLayout;

@@ -1,4 +1,5 @@
 import routesMap from "../../../routeControl/userRoutMap";
+import { UserDashboard } from "../../../components/SuperAdmin/Dashboard";
 
 export default function route() {
   return [
@@ -10,7 +11,7 @@ export default function route() {
       private: true,
       withAuth: true,
       belongsToHeader: true,
-      element: <h1>Protected Route</h1>,
+      element: <UserDashboard />,
     },
   ];
 }
