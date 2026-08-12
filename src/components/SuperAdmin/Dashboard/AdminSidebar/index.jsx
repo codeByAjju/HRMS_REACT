@@ -1,20 +1,22 @@
-import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import SuperAdminAccessRoute from "../../../../routeControl/superAdminRoutMap";
 
 function AdminSidebar() {
-  const [isOpen, setIsOpen] = useState(true);
+  const navLinkClass = ({ isActive }) =>
+    `nav-link ${isActive ? "active" : ""}`;
+
   return (
     <aside className="admin-sidebar" aria-label="Main navigation">
       <div className="sidebar-header">
-        <a 
-          className="brand-mark" 
-          href={SuperAdminAccessRoute.DASHBOARD.path} 
+        <a
+          className="brand-mark"
+          href={SuperAdminAccessRoute.DASHBOARD.path}
           aria-label="adminHMD dashboard"
         >
           <span className="brand-icon">
             <i className="bi bi-grid-1x2-fill" aria-hidden="true"></i>
           </span>
+
           <span className="brand-copy">
             <span className="brand-title">adminHMD</span>
             <span className="brand-subtitle">Admin Template</span>
@@ -24,11 +26,9 @@ function AdminSidebar() {
 
       <nav className="sidebar-nav">
         <NavLink
-          className={({ isActive }) =>
-            `nav-link ${!isActive ? "active" : ""}`
-          }
+          className={navLinkClass}
           to={SuperAdminAccessRoute.DASHBOARD.path}
-          aria-current="page"
+          end
         >
           <span className="nav-icon">
             <i className="bi bi-speedometer2" aria-hidden="true"></i>
@@ -37,9 +37,7 @@ function AdminSidebar() {
         </NavLink>
 
         <NavLink
-          className={({ isActive }) =>
-            `nav-link ${!isActive ? "active" : ""}`
-          }
+          className={navLinkClass}
           to={SuperAdminAccessRoute.ADMIN_USERS.path}
         >
           <span className="nav-icon">
@@ -48,125 +46,75 @@ function AdminSidebar() {
           <span className="nav-text">Users</span>
         </NavLink>
 
-        <NavLink
-          className={({ isActive }) =>
-            `nav-link ${!isActive ? "active" : ""}`
-          }
-          to="#add-user"
-        >
+        <a className="nav-link" href="#add-user">
           <span className="nav-icon">
             <i className="bi bi-person-plus" aria-hidden="true"></i>
           </span>
           <span className="nav-text">Add User</span>
-        </NavLink>
+        </a>
 
-        <NavLink
-          className={({ isActive }) =>
-            `nav-link ${!isActive ? "active" : ""}`
-          }
-          to="#profile"
-        >
+        <a className="nav-link" href="#profile">
           <span className="nav-icon">
             <i className="bi bi-person-badge" aria-hidden="true"></i>
           </span>
           <span className="nav-text">Profile</span>
-        </NavLink>
+        </a>
 
-        <NavLink
-          className={({ isActive }) =>
-            `nav-link ${!isActive ? "active" : ""}`
-          }
-          to="#charts"
-        >
+        <a className="nav-link" href="#charts">
           <span className="nav-icon">
             <i className="bi bi-bar-chart-line" aria-hidden="true"></i>
           </span>
           <span className="nav-text">Charts</span>
-        </NavLink>
+        </a>
 
-        <NavLink
-          className={({ isActive }) =>
-            `nav-link ${!isActive ? "active" : ""}`
-          }
-          to="#tables"
-        >
+        <a className="nav-link" href="#tables">
           <span className="nav-icon">
             <i className="bi bi-table" aria-hidden="true"></i>
           </span>
           <span className="nav-text">Tables</span>
-        </NavLink>
+        </a>
 
-        <NavLink
-          className={({ isActive }) =>
-            `nav-link ${!isActive ? "active" : ""}`
-          }
-          to="#forms"
-        >
+        <a className="nav-link" href="#forms">
           <span className="nav-icon">
             <i className="bi bi-ui-checks-grid" aria-hidden="true"></i>
           </span>
           <span className="nav-text">Forms</span>
-        </NavLink>
+        </a>
 
-        <NavLink
-          className={({ isActive }) =>
-            `nav-link ${!isActive ? "active" : ""}`
-          }
-          to="#components"
-        >
+        <a className="nav-link" href="#components">
           <span className="nav-icon">
             <i className="bi bi-grid-3x3-gap" aria-hidden="true"></i>
           </span>
           <span className="nav-text">Components</span>
-        </NavLink>
+        </a>
 
-        <NavLink
-          className={({ isActive }) =>
-            `nav-link ${!isActive ? "active" : ""}`
-          }
-          to="#alerts"
-        >
+        <a className="nav-link" href="#alerts">
           <span className="nav-icon">
             <i className="bi bi-exclamation-triangle" aria-hidden="true"></i>
           </span>
           <span className="nav-text">Alerts</span>
-        </NavLink>
+        </a>
 
-        <NavLink
-          className={({ isActive }) =>
-            `nav-link ${!isActive ? "active" : ""}`
-          }
-          to="#modals"
-        >
+        <a className="nav-link" href="#modals">
           <span className="nav-icon">
             <i className="bi bi-window-stack" aria-hidden="true"></i>
           </span>
           <span className="nav-text">Modals</span>
-        </NavLink>
+        </a>
 
-        <NavLink
-          className={({ isActive }) =>
-            `nav-link ${!isActive ? "active" : ""}`
-          }
-          to="#settings"
-        >
+        <a className="nav-link" href="#settings">
           <span className="nav-icon">
             <i className="bi bi-gear" aria-hidden="true"></i>
           </span>
           <span className="nav-text">Settings</span>
-        </NavLink>
+        </a>
 
-        <NavLink
-          className={({ isActive }) =>
-            `nav-link ${!isActive ? "active" : ""}`
-          }
-          to="#blank"
-        >
+        <a className="nav-link" href="#blank">
           <span className="nav-icon">
             <i className="bi bi-file-earmark" aria-hidden="true"></i>
           </span>
           <span className="nav-text">Blank Page</span>
-        </NavLink>
+        </a>
       </nav>
 
       <div className="sidebar-user">
@@ -181,7 +129,9 @@ function AdminSidebar() {
 
       <div className="sidebar-footer">
         <span className="status-dot"></span>
-        <span className="sidebar-footer-text">System running smoothly</span>
+        <span className="sidebar-footer-text">
+          System running smoothly
+        </span>
       </div>
     </aside>
   );
