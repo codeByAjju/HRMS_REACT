@@ -45,14 +45,15 @@ function AdminSidebar() {
           </span>
           <span className="nav-text">Users</span>
         </NavLink>
-
-        <a className="nav-link" href="#add-user">
+        <NavLink
+          className={navLinkClass}
+          to={SuperAdminAccessRoute.ADMIN_ADD_USERS.path}
+        >
           <span className="nav-icon">
             <i className="bi bi-person-plus" aria-hidden="true"></i>
           </span>
           <span className="nav-text">Add User</span>
-        </a>
-
+        </NavLink>
         <a className="nav-link" href="#profile">
           <span className="nav-icon">
             <i className="bi bi-person-badge" aria-hidden="true"></i>

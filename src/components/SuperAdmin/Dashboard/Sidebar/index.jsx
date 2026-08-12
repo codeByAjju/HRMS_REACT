@@ -39,7 +39,6 @@ const Sidebar = ({ children }) => {
           </div>
         </div>
 
-        {/* Dashboard */}
         <NavLink to="/" className="link" activeClassName="active">
           <div className="icon">
             <FaTh />
