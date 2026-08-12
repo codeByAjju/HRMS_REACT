@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import SuperAdminAccessRoute from "../../../../routeControl/superAdminRoutMap";
 
 function AdminSidebar() {
   const [isOpen, setIsOpen] = useState(true);
-
   return (
     <aside className="admin-sidebar" aria-label="Main navigation">
       <div className="sidebar-header">
-        <a className="brand-mark" href="#dashboard" aria-label="adminHMD dashboard">
+        <a 
+          className="brand-mark" 
+          href={SuperAdminAccessRoute.DASHBOARD.path} 
+          aria-label="adminHMD dashboard"
+        >
           <span className="brand-icon">
             <i className="bi bi-grid-1x2-fill" aria-hidden="true"></i>
           </span>
@@ -21,9 +25,9 @@ function AdminSidebar() {
       <nav className="sidebar-nav">
         <NavLink
           className={({ isActive }) =>
-            `nav-link ${isActive ? "active" : ""}`
+            `nav-link ${!isActive ? "active" : ""}`
           }
-          to="/dashboard"
+          to={SuperAdminAccessRoute.DASHBOARD.path}
           aria-current="page"
         >
           <span className="nav-icon">
@@ -34,9 +38,9 @@ function AdminSidebar() {
 
         <NavLink
           className={({ isActive }) =>
-            `nav-link ${isActive ? "active" : ""}`
+            `nav-link ${!isActive ? "active" : ""}`
           }
-          to="/users"
+          to={SuperAdminAccessRoute.ADMIN_USERS.path}
         >
           <span className="nav-icon">
             <i className="bi bi-people" aria-hidden="true"></i>
@@ -46,9 +50,9 @@ function AdminSidebar() {
 
         <NavLink
           className={({ isActive }) =>
-            `nav-link ${isActive ? "active" : ""}`
+            `nav-link ${!isActive ? "active" : ""}`
           }
-          to="/add-user"
+          to="#add-user"
         >
           <span className="nav-icon">
             <i className="bi bi-person-plus" aria-hidden="true"></i>
@@ -58,9 +62,9 @@ function AdminSidebar() {
 
         <NavLink
           className={({ isActive }) =>
-            `nav-link ${isActive ? "active" : ""}`
+            `nav-link ${!isActive ? "active" : ""}`
           }
-          to="/profile"
+          to="#profile"
         >
           <span className="nav-icon">
             <i className="bi bi-person-badge" aria-hidden="true"></i>
@@ -70,9 +74,9 @@ function AdminSidebar() {
 
         <NavLink
           className={({ isActive }) =>
-            `nav-link ${isActive ? "active" : ""}`
+            `nav-link ${!isActive ? "active" : ""}`
           }
-          to="/charts"
+          to="#charts"
         >
           <span className="nav-icon">
             <i className="bi bi-bar-chart-line" aria-hidden="true"></i>
@@ -82,9 +86,9 @@ function AdminSidebar() {
 
         <NavLink
           className={({ isActive }) =>
-            `nav-link ${isActive ? "active" : ""}`
+            `nav-link ${!isActive ? "active" : ""}`
           }
-          to="/tables"
+          to="#tables"
         >
           <span className="nav-icon">
             <i className="bi bi-table" aria-hidden="true"></i>
@@ -94,9 +98,9 @@ function AdminSidebar() {
 
         <NavLink
           className={({ isActive }) =>
-            `nav-link ${isActive ? "active" : ""}`
+            `nav-link ${!isActive ? "active" : ""}`
           }
-          to="/forms"
+          to="#forms"
         >
           <span className="nav-icon">
             <i className="bi bi-ui-checks-grid" aria-hidden="true"></i>
@@ -106,9 +110,9 @@ function AdminSidebar() {
 
         <NavLink
           className={({ isActive }) =>
-            `nav-link ${isActive ? "active" : ""}`
+            `nav-link ${!isActive ? "active" : ""}`
           }
-          to="/components"
+          to="#components"
         >
           <span className="nav-icon">
             <i className="bi bi-grid-3x3-gap" aria-hidden="true"></i>
@@ -118,9 +122,9 @@ function AdminSidebar() {
 
         <NavLink
           className={({ isActive }) =>
-            `nav-link ${isActive ? "active" : ""}`
+            `nav-link ${!isActive ? "active" : ""}`
           }
-          to="/alerts"
+          to="#alerts"
         >
           <span className="nav-icon">
             <i className="bi bi-exclamation-triangle" aria-hidden="true"></i>
@@ -130,9 +134,9 @@ function AdminSidebar() {
 
         <NavLink
           className={({ isActive }) =>
-            `nav-link ${isActive ? "active" : ""}`
+            `nav-link ${!isActive ? "active" : ""}`
           }
-          to="/modals"
+          to="#modals"
         >
           <span className="nav-icon">
             <i className="bi bi-window-stack" aria-hidden="true"></i>
@@ -142,9 +146,9 @@ function AdminSidebar() {
 
         <NavLink
           className={({ isActive }) =>
-            `nav-link ${isActive ? "active" : ""}`
+            `nav-link ${!isActive ? "active" : ""}`
           }
-          to="/settings"
+          to="#settings"
         >
           <span className="nav-icon">
             <i className="bi bi-gear" aria-hidden="true"></i>
@@ -154,9 +158,9 @@ function AdminSidebar() {
 
         <NavLink
           className={({ isActive }) =>
-            `nav-link ${isActive ? "active" : ""}`
+            `nav-link ${!isActive ? "active" : ""}`
           }
-          to="/blank"
+          to="#blank"
         >
           <span className="nav-icon">
             <i className="bi bi-file-earmark" aria-hidden="true"></i>

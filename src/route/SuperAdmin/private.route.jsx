@@ -1,6 +1,10 @@
 import adminMasters from "../SuperAdmin/AdminMaster/index.route";
-export default function route(){
+import adminUsers from "../SuperAdmin/Users/index.route";
+import adminDashboard from '../SuperAdmin/AdminDashboard/index.route';
+export default function route() {
     return [
-    ...adminMasters()
+        ...adminDashboard(),
+        ...adminMasters(),
+        ...adminUsers()
     ];
 }
