@@ -10,7 +10,7 @@ export default function route() {
       private: true,
       withAuth: true,
       belongsToHeader: true,
-      element: <h1>User public routes</h1>,
+      element: <h1>User Private routes</h1>,
     },
   ];
 }

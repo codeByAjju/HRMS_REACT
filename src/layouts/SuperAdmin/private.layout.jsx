@@ -1,6 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import AppLayout from "../App/index.layout";
 import { useEffect, useState } from "react";
+import { AdminSidebar, Navbar } from "../../components";
 
 function SuperAdminPrivateLayout() {
   const navigate = useNavigate();
@@ -18,6 +19,14 @@ function SuperAdminPrivateLayout() {
         <main className="nk-body bg-lighter npc-default has-sidebar">
           <div className="nk-app-root">
             <div className="nk-main">
+              <div className="admin-shell">
+                <div className="sidebar-backdrop" data-sidebar-close></div>
+                <AdminSidebar />
+                <div className="admin-main">
+                  <Navbar />
+                  <Outlet />
+                </div>
+              </div>
               <Outlet />
             </div>
           </div>

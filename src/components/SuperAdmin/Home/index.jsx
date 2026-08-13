@@ -1,10 +1,7 @@
-import DashboardContent from "../DashboardContent";
-import "./userDashboard.css";
-
 function UserDashboard() {
   return (
     <>
-      <DashboardContent />
+      <h1>User Dashboard</h1>
     </>
   );
 }

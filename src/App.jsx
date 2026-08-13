@@ -1,8 +1,12 @@
 import { BrowserRouter as Router, useRoutes } from "react-router-dom";
 import './App.css'
+import './index.css'
 import { AdminSidebar, Navbar } from "./components";
+
 import { Unknown } from "./components";
 import { routes } from "./route/index";
+import { Suspense } from "react";
+import { Toaster } from "./components/UiElement/Toaster";
 
 function RouteLayout({ path }) {
     const element = useRoutes(path);
@@ -14,18 +18,14 @@ function RouteLayout({ path }) {
 function App() {
 
     return <>
-        <Router>
-            <div className="App">
-                <div className="admin-shell">
-                    <div className="sidebar-backdrop" data-sidebar-close></div>
-                    <AdminSidebar />
-                    <div className="admin-main">
-                        <Navbar />
-                        <RouteLayout path={routes()} />
-                    </div>
+        <Suspense fallback={<div className="js-preloader"><div className="loading-animation tri-ring"></div></div>}>
+            <Router>
+                <div className="App">
+                    <RouteLayout path={routes()} />
                 </div>
-            </div>
-        </Router>
+            </Router>
+            <Toaster />
+        </Suspense>
     </>
 }
 
