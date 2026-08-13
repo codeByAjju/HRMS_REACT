@@ -1,5 +1,6 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import AppLayout from "../App/index.layout";
+import { AdminSidebar, UserNavbar, UserSidebar} from "../../components";
 import { useEffect, useState } from "react";
 
 function PrivateLayout() {
@@ -14,8 +15,22 @@ function PrivateLayout() {
   }, [navigate, redirectPath]);
 
   return (
-    <AppLayout setRedirectPath={setRedirectPath}>
-      <Outlet />
+    <AppLayout setRedirectPath={setRedirectPath} >
+      <main className="nk-body bg-lighter npc-default has-sidebar">
+        <div className="nk-app-root">
+          <div className="nk-main">
+            <div className="admin-shell">
+              <div className="sidebar-backdrop" data-sidebar-close></div>
+              <UserSidebar />
+              <div className="admin-main">
+                <UserNavbar />
+                <Outlet />
+              </div>
+            </div>
+            <Outlet />
+          </div>
+        </div>
+      </main>
     </AppLayout>
   );
 }

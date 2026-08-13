@@ -172,7 +172,6 @@ function AppLayout({ setRedirectPath, children }) {
         activeRoute?.adminAccess !== true
       ) {
         toast.warning("You are not authorized to access this page.");
-
         setRedirectPath(
           roleRedirectMap.admin
         );
