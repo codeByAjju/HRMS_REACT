@@ -8,6 +8,7 @@ import { loginAction } from "../../../redux/AuthSlice/index";
 import { useDispatch } from "react-redux";
 import routesMap from "../../../routeControl/userRoutMap";
 import SuperAdminAccessRoute from "../../../routeControl/superAdminRoutMap";
+import { toast } from "react-toastify";
 
 function UserLogIn() {
   const [isAlertVisible, setIsAlertVisible] = useState(false);
@@ -22,7 +23,7 @@ function UserLogIn() {
     if (authData?.token) {
       setLocalStorageToken(authData.token);
       dispatch(loginAction(authData));
-      setIsAlertVisible(true);
+      toast.success("Login Successfull");
       navigate(
         role === "user"
           ? routesMap.DASHBOARD.path
@@ -33,14 +34,6 @@ function UserLogIn() {
   return (
     <>
       <LoginForm onSubmit={OnSubmit} />
-      <SweetAlert
-        title="Congratulations"
-        text="Login Successfull"
-        show={isAlertVisible}
-        icon="success"
-        setIsAlertVisible={setIsAlertVisible}
-        timer="1500"
-      />
     </>
   );
 }

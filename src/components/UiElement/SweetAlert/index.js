@@ -1,21 +1,47 @@
-import { useEffect } from "react";
 import Swal from "sweetalert2";
 
-function SweetAlert({ show, setIsAlertVisible, title, text, icon, timer }) {
-  useEffect(() => {
-    if (!show) return;
-
+export const SweetAlert = {
+  success: (title = "Success", text = "", options = {}) =>
     Swal.fire({
+      icon: "success",
       title,
       text,
-      icon,
-      timer,
-    }).then(() => {
-      setIsAlertVisible(false);
+      ...options,
+    }),
+
+  error: (title = "Error", text = "", options = {}) =>
+    Swal.fire({
+      icon: "error",
+      title,
+      text,
+      ...options,
+    }),
+
+  warning: (title = "Warning", text = "", options = {}) =>
+    Swal.fire({
+      icon: "warning",
+      title,
+      text,
+      ...options,
+    }),
+
+  confirm: async ({
+    title = "Are you sure?",
+    text = "You won’t be able to revert this!",
+    confirmButtonText = "Yes",
+    cancelButtonText = "Cancel",
+    ...rest
+  } = {}) => {
+    const result = await Swal.fire({
+      title,
+      text,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText,
+      cancelButtonText,
+      ...rest,
     });
-  }, [icon, setIsAlertVisible, show, text, timer, title]);
 
-  return null;
-}
-
-export default SweetAlert;
+    return result.isConfirmed;
+  },
+};

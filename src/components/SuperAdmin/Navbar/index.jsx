@@ -1,10 +1,28 @@
 import { useState } from "react";
-
+import { useDispatch } from "react-redux";
+import { logout } from "../../../redux/AuthSlice";
+import { useNavigate } from "react-router-dom";
+import userAccessRoute from "../../../routeControl/userRoutMap";
+import { SweetAlert } from "../../../components/UiElement/SweetAlert";
 function Navbar() {
   const [isDarkMode, setIsDarkMode] = useState(false);
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
+  };
+  const handleLogout = async () => {
+    const confirmed = await SweetAlert.confirm({
+      title: "Logout",
+      text: "Are you sure you want to logout?",
+      confirmButtonText: "Logout",
+      cancelButtonText: "Cancel",
+    });
+
+    if (confirmed) {
+      dispatch(logout());
+      navigate(userAccessRoute.LOGIN.path);
+    }
   };
 
   return (
@@ -108,9 +126,9 @@ function Navbar() {
                 <hr className="dropdown-divider" />
               </li>
               <li>
-                <a className="dropdown-item" href="#logout">
-                  Sign out
-                </a>
+                <button className="dropdown-item" onClick={handleLogout}>
+                  Logout
+                </button>
               </li>
             </ul>
           </div>
