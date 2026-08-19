@@ -74,12 +74,15 @@ function AdminSidebar() {
           <span className="nav-text">Charts</span>
         </NavLink>
 
-        <a className="nav-link" href="#tables">
+        <NavLink
+          className={navLinkClass}
+          to={SuperAdminAccessRoute.ADMIN_COMPANY.path}
+        >
           <span className="nav-icon">
             <i className="bi bi-table" aria-hidden="true"></i>
           </span>
-          <span className="nav-text">Tables</span>
-        </a>
+          <span className="nav-text">Company</span>
+        </NavLink>
 
         <a className="nav-link" href="#forms">
           <span className="nav-icon">

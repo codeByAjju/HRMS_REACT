@@ -19,6 +19,9 @@ const SuperAdminAccessRoute = {
   ADMIN_CHARTS: {
     path: `${baseRoutes.superAdminBaseRoute}/charts`,
   },
+  ADMIN_COMPANY: {
+    path: `${baseRoutes.superAdminBaseRoute}/company`,
+  },
   MASTERS: { path: `${baseRoutes.superAdminBaseRoute}/masters` },
   LOGIN: { path: `${baseRoutes.superAdminBaseRoute}/login` },
 };
