@@ -1,19 +1,11 @@
 function AdminCompanyDashboard() {
-  return (<main className="dashboard-content">
+  return (<main className="">
     <div className="container-fluid px-3 px-lg-4 py-4">
       {/* Page Heading */}
       <div className="page-heading">
         <div className="page-heading-copy">
-          <span className="page-icon">
-            <i className="bi bi-speedometer2" aria-hidden="true"></i>
-          </span>
           <div>
-            <p className="eyebrow mb-1">Overview</p>
-            <h1 className="h3 mb-1">Dashboard</h1>
-            <p className="text-muted mb-0">
-              Monitor performance, sales, users, and support from one clean
-              workspace.
-            </p>
+            <h1 className="h3 mb-1">Company Management</h1>
           </div>
         </div>
         <div className="heading-actions">
@@ -33,15 +25,14 @@ function AdminCompanyDashboard() {
         <div className="col-12 col-sm-6 col-xl-3">
           <article className="metric-card metric-primary">
             <div className="metric-top">
-              <span className="metric-label">Revenue</span>
+              <span className="metric-label">Total Companies</span>
               <span className="metric-icon">
-                <i className="bi bi-currency-dollar" aria-hidden="true"></i>
+                <i className="bi bi-building" aria-hidden="true"></i>
               </span>
             </div>
-            <div className="metric-value">$48,240</div>
+            <div className="metric-value">12</div>
             <div className="metric-meta">
-              <span className="text-success">+12.5%</span>
-              <span>from last month</span>
+              <span className="text-success">+2 this month</span>
             </div>
           </article>
         </div>
@@ -50,15 +41,14 @@ function AdminCompanyDashboard() {
         <div className="col-12 col-sm-6 col-xl-3">
           <article className="metric-card metric-success">
             <div className="metric-top">
-              <span className="metric-label">Orders</span>
+              <span className="metric-label">Active Companies</span>
               <span className="metric-icon">
-                <i className="bi bi-bag-check" aria-hidden="true"></i>
+                <i className="bi bi-check-circle" aria-hidden="true"></i>
               </span>
             </div>
-            <div className="metric-value">1,284</div>
+            <div className="metric-value">10</div>
             <div className="metric-meta">
-              <span className="text-success">+8.2%</span>
-              <span>new orders</span>
+              <span className="text-success">+83.33%</span>
             </div>
           </article>
         </div>
@@ -67,37 +57,35 @@ function AdminCompanyDashboard() {
         <div className="col-12 col-sm-6 col-xl-3">
           <article className="metric-card metric-warning">
             <div className="metric-top">
-              <span className="metric-label">Customers</span>
+              <span className="metric-label">Inactive Companies</span>
               <span className="metric-icon">
-                <i className="bi bi-people" aria-hidden="true"></i>
+                <i className="bi bi-pause-circle" aria-hidden="true"></i>
               </span>
             </div>
-            <div className="metric-value">8,742</div>
+            <div className="metric-value">2</div>
             <div className="metric-meta">
-              <span className="text-success">+5.1%</span>
-              <span>active users</span>
+              <span className="text-success">16.67%</span>
             </div>
           </article>
         </div>
 
         {/* Tickets Card */}
         <div className="col-12 col-sm-6 col-xl-3">
-          <article className="metric-card metric-danger">
+          <article className="metric-card metric-primary">
             <div className="metric-top">
-              <span className="metric-label">Tickets</span>
+              <span className="metric-label">Total Employees</span>
               <span className="metric-icon">
-                <i className="bi bi-life-preserver" aria-hidden="true"></i>
+                <i className="bi bi-people" aria-hidden="true"></i>
               </span>
             </div>
-            <div className="metric-value">36</div>
+            <div className="metric-value">1245</div>
             <div className="metric-meta">
-              <span className="text-danger">3 urgent</span>
-              <span>need review</span>
+              <span className="">Across all companies</span>
             </div>
           </article>
         </div>
       </section>
-    </div>
+    </div>  
   </main>);
 }
 

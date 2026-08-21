@@ -1,12 +1,16 @@
 import axios from "axios";
+import { GetLocalStorageToken } from "../utils/common.util";
 export const APIrequest = async ({
     method,
     url,
     baseURL,
     bodyData,
+    cancelFunction,
+    queryParams,
+    removeHeaders,
 }) => {
     try {
-        console.log(bodyData);
+        const apiToken = GetLocalStorageToken();
         const axiosConfig = {
             method: method || "GET",
             baseURL: import.meta.env.VITE_REACT_APP_API_BASE_URL,
@@ -34,6 +38,41 @@ export const APIrequest = async ({
                 }
             }
             axiosConfig.data = bodyPayload;
+        }
+        // Set cancel token if cancel function provided.
+        if (cancelFunction) {
+            axiosConfig.cancelToken = new axios.CancelToken((cancel) => {
+                cancelFunction(cancel);
+            });
+        }
+
+        // Remove headers if specified.
+        if (removeHeaders) {
+            delete axiosConfig.headers;
+        }
+
+        // Set query parameters if provided.
+        if (queryParams) {
+            const queryParamsPayload = {};
+            for (const key in queryParams) {
+                if (Object.hasOwnProperty.call(queryParams, key)) {
+                    let element = queryParams[key];
+                    if (typeof element === "string") {
+                        element = element.trim();
+                    }
+                    if (!["", null, undefined, NaN].includes(element)) {
+                        queryParamsPayload[key] = element;
+                    }
+                }
+            }
+            axiosConfig.params = queryParamsPayload;
+        }
+
+        if (apiToken) {
+            axiosConfig.headers = {
+                ...axiosConfig.headers,
+                Authorization: `Bearer ${apiToken}`,
+            };
         }
         const res = await axios(axiosConfig);
         return res;

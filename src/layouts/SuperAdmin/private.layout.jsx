@@ -27,7 +27,6 @@ function SuperAdminPrivateLayout() {
                   <Outlet />
                 </div>
               </div>
-              <Outlet />
             </div>
           </div>
         </main>
