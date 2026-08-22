@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import "./datatable.css";
+import { useMemo, useState } from "react";
 
 export function DataTable({
   options = { columns: [], rows: [] },
@@ -13,100 +13,30 @@ export function DataTable({
   emptyIcon = "bi-inbox",
   emptyTitle = "No records found",
   emptySubtitle = "Try changing your search or filters.",
+
+  // ── Server-driven state (all controlled by parent) ──────────────
+  searchQuery = "",
+  onSearchChange,
+
+  sortConfig = { key: null, order: "asc" },
+  onSortChange,
+
+  colFilters = {},
+  onColFilterChange,
+
+  currentPage = 1,
+  rowsPerPage = 10,
+  totalItems = 0,
+  onPageChange,
+  onRowsPerPageChange,
+
+  loading = false,
   ...props
 }) {
-  // ── All existing state & logic — untouched ──────────────────────────────
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: null, order: "asc" });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  // Column-level filter state: { [colKey]: string }
-  const [colFilters, setColFilters] = useState({});
-  // Which column's filter popover is open
   const [openFilter, setOpenFilter] = useState(null);
 
-  const extractValue = (value) => {
-    if (typeof value === "object" && value !== null && value.props) {
-      if (value.props.userName) return value.props.userName;
-      if (value.props.children) return value.props.children.toString();
-    }
-    return value || "";
-  };
+  const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
 
-  const filteredRows = useMemo(() => {
-    let rows = options.rows;
-    // global search
-    if (searchQuery) {
-      rows = rows.filter((row) =>
-        options.columns.some((col) => {
-          const cellValue = extractValue(row[col.key]);
-          return cellValue.toString().toLowerCase().includes(searchQuery.toLowerCase());
-        })
-      );
-    }
-    // per-column filters
-    Object.entries(colFilters).forEach(([key, val]) => {
-      if (!val) return;
-      rows = rows.filter((row) => {
-        const cellValue = extractValue(row[key]);
-        return cellValue.toString().toLowerCase().includes(val.toLowerCase());
-      });
-    });
-    return rows;
-  }, [options.rows, options.columns, searchQuery, colFilters]);
-
-  const sortedRows = useMemo(() => {
-    if (sortConfig.key) {
-      return [...filteredRows].sort((a, b) => {
-        const aValue = extractValue(a[sortConfig.key]);
-        const bValue = extractValue(b[sortConfig.key]);
-        if (aValue < bValue) return sortConfig.order === "asc" ? -1 : 1;
-        if (aValue > bValue) return sortConfig.order === "asc" ? 1 : -1;
-        return 0;
-      });
-    }
-    return filteredRows;
-  }, [filteredRows, sortConfig]);
-
-  const paginatedRows = useMemo(() => {
-    const startIndex = (currentPage - 1) * rowsPerPage;
-    return sortedRows.slice(startIndex, startIndex + rowsPerPage);
-  }, [sortedRows, currentPage, rowsPerPage]);
-
-  const handleSort = (key) => {
-    let newOrder = "asc";
-    if (sortConfig.key === key && sortConfig.order === "asc") {
-      newOrder = "desc";
-    }
-    setSortConfig({ key, order: newOrder });
-  };
-
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
-
-  const handleRowsPerPageChange = (e) => {
-    setRowsPerPage(parseInt(e.target.value, 10));
-    setCurrentPage(1);
-  };
-
-  const handleColFilterChange = (key, val) => {
-    setColFilters((prev) => ({ ...prev, [key]: val }));
-    setCurrentPage(1);
-  };
-
-  const toggleFilter = (key) => {
-    setOpenFilter((prev) => (prev === key ? null : key));
-  };
-
-  const renderCellContent = (col, row) => {
-    return row[col.key] || "-";
-  };
-
-  const totalPages = Math.ceil(sortedRows.length / rowsPerPage);
-
-  // Pagination window: max 5 page numbers centered around current page
   const pageWindow = useMemo(() => {
     const delta = 2;
     const pages = [];
@@ -116,14 +46,19 @@ export function DataTable({
     return pages;
   }, [currentPage, totalPages]);
 
-  const startRecord = sortedRows.length === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
-  const endRecord = Math.min(currentPage * rowsPerPage, sortedRows.length);
-  // ─────────────────────────────────────────────────────────────────────────
+  const startRecord = totalItems === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
+  const endRecord = Math.min(currentPage * rowsPerPage, totalItems);
+
+  const toggleFilter = (key) => setOpenFilter((prev) => (prev === key ? null : key));
+
+  const handleSort = (key) => {
+    let newOrder = "asc";
+    if (sortConfig.key === key && sortConfig.order === "asc") newOrder = "desc";
+    onSortChange?.({ key, order: newOrder });
+  };
 
   return (
     <div className="dt-wrapper">
-
-      {/* ── Top bar ──────────────────────────────────────────────────── */}
       <div className="dt-topbar">
         <div className="dt-topbar-left">
           {title && <div className="dt-title">{title}</div>}
@@ -137,7 +72,7 @@ export function DataTable({
               className="dt-search-input"
               placeholder={searchPlaceholder}
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => onSearchChange?.(e.target.value)}
             />
           </div>
           {onExport && (
@@ -149,7 +84,6 @@ export function DataTable({
         </div>
       </div>
 
-      {/* ── Table ────────────────────────────────────────────────────── */}
       <div className="dt-table-wrap">
         <table className="dt-table" {...props}>
           <thead>
@@ -165,7 +99,6 @@ export function DataTable({
                     style={{ width: col.width || undefined }}
                   >
                     <div className="dt-th-inner">
-                      {/* Sort trigger */}
                       <span
                         className={`dt-th-label${col.sorting ? " dt-th-sortable" : ""}`}
                         onClick={col.sorting ? () => handleSort(col.key) : undefined}
@@ -173,19 +106,12 @@ export function DataTable({
                         {col.title}
                         {col.sorting && (
                           <span className="dt-sort-icons">
-                            <i
-                              className={`bi bi-caret-up-fill dt-sort-up${isActive && sortConfig.order === "asc" ? " dt-sort-on" : ""}`}
-                              aria-hidden="true"
-                            />
-                            <i
-                              className={`bi bi-caret-down-fill dt-sort-down${isActive && sortConfig.order === "desc" ? " dt-sort-on" : ""}`}
-                              aria-hidden="true"
-                            />
+                            <i className={`bi bi-caret-up-fill dt-sort-up${isActive && sortConfig.order === "asc" ? " dt-sort-on" : ""}`} />
+                            <i className={`bi bi-caret-down-fill dt-sort-down${isActive && sortConfig.order === "desc" ? " dt-sort-on" : ""}`} />
                           </span>
                         )}
                       </span>
 
-                      {/* Column filter button */}
                       {hasFilter && (
                         <div className="dt-col-filter-wrap">
                           <button
@@ -194,9 +120,8 @@ export function DataTable({
                             onClick={() => toggleFilter(col.key)}
                             title={`Filter ${col.title}`}
                           >
-                            <i className="bi bi-funnel-fill" aria-hidden="true" />
+                            <i className="bi bi-funnel-fill" />
                           </button>
-
                           {isFilterOpen && (
                             <div className="dt-col-filter-popover">
                               <input
@@ -205,7 +130,7 @@ export function DataTable({
                                 className="dt-col-filter-input"
                                 placeholder={`Filter ${col.title}...`}
                                 value={colFilters[col.key] || ""}
-                                onChange={(e) => handleColFilterChange(col.key, e.target.value)}
+                                onChange={(e) => onColFilterChange?.(col.key, e.target.value)}
                                 onKeyDown={(e) => e.key === "Escape" && setOpenFilter(null)}
                               />
                               {colFilters[col.key] && (
@@ -213,7 +138,7 @@ export function DataTable({
                                   type="button"
                                   className="dt-col-filter-clear"
                                   onClick={() => {
-                                    handleColFilterChange(col.key, "");
+                                    onColFilterChange?.(col.key, "");
                                     setOpenFilter(null);
                                   }}
                                 >
@@ -232,12 +157,20 @@ export function DataTable({
           </thead>
 
           <tbody>
-            {paginatedRows.length > 0 ? (
-              paginatedRows.map((row, rowIndex) => (
-                <tr key={rowIndex} className="dt-row">
+            {loading ? (
+              <tr>
+                <td colSpan={options.columns.length} className="dt-empty">
+                  <div className="dt-empty-inner">
+                    <p className="dt-empty-title">Loading...</p>
+                  </div>
+                </td>
+              </tr>
+            ) : options?.rows?.length > 0 ? (
+              options?.rows?.map((row, rowIndex) => (
+                <tr key={row.id ?? rowIndex} className="dt-row">
                   {options.columns.map((col, colIndex) => (
-                    <td key={colIndex} className="dt-td">
-                      {renderCellContent(col, row)}
+                    <td key={colIndex} className={`dt-td${col.extraClass ? ` ${col.extraClass}` : ""}`}>
+                      {row[col.key] ?? "-"}
                     </td>
                   ))}
                 </tr>
@@ -247,7 +180,7 @@ export function DataTable({
                 <td colSpan={options.columns.length} className="dt-empty">
                   <div className="dt-empty-inner">
                     <div className="dt-empty-icon">
-                      <i className={`bi ${emptyIcon}`} aria-hidden="true" />
+                      <i className={`bi ${emptyIcon}`} />
                     </div>
                     <p className="dt-empty-title">{emptyTitle}</p>
                     <p className="dt-empty-sub">{emptySubtitle}</p>
@@ -259,16 +192,14 @@ export function DataTable({
         </table>
       </div>
 
-      {/* Optional summary slot */}
       {summaryBar}
 
-      {/* ── Footer ───────────────────────────────────────────────────── */}
       <div className="dt-footer">
         <div className="dt-footer-info">
-          {sortedRows.length > 0 ? (
+          {totalItems > 0 ? (
             <>
               Showing {startRecord}–{endRecord} of{" "}
-              <strong>{sortedRows.length.toLocaleString()}</strong> records
+              <strong>{totalItems.toLocaleString()}</strong> records
             </>
           ) : (
             "No data available"
@@ -278,7 +209,7 @@ export function DataTable({
             <select
               className="dt-rpp-select"
               value={rowsPerPage}
-              onChange={handleRowsPerPageChange}
+              onChange={(e) => onRowsPerPageChange?.(parseInt(e.target.value, 10))}
             >
               <option value="10">10</option>
               <option value="25">25</option>
@@ -289,93 +220,56 @@ export function DataTable({
         </div>
 
         <div className="dt-pagination">
-          {/* Previous */}
           <button
             type="button"
             className="dt-page-btn dt-page-prev"
             disabled={currentPage === 1}
-            onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+            onClick={() => onPageChange?.(currentPage - 1)}
           >
             Previous
           </button>
 
-          {/* First page + ellipsis */}
           {pageWindow[0] > 1 && (
             <>
-              <button type="button" className="dt-page-btn" onClick={() => handlePageChange(1)}>1</button>
+              <button type="button" className="dt-page-btn" onClick={() => onPageChange?.(1)}>1</button>
               {pageWindow[0] > 2 && <span className="dt-page-ellipsis">…</span>}
             </>
           )}
 
-          {/* Page window */}
           {pageWindow.map((page) => (
             <button
               key={page}
               type="button"
               className={`dt-page-btn${currentPage === page ? " dt-page-active" : ""}`}
-              onClick={() => handlePageChange(page)}
+              onClick={() => onPageChange?.(page)}
             >
               {page}
             </button>
           ))}
 
-          {/* Last page + ellipsis */}
           {pageWindow[pageWindow.length - 1] < totalPages && (
             <>
               {pageWindow[pageWindow.length - 1] < totalPages - 1 && (
                 <span className="dt-page-ellipsis">…</span>
               )}
-              <button
-                type="button"
-                className="dt-page-btn"
-                onClick={() => handlePageChange(totalPages)}
-              >
+              <button type="button" className="dt-page-btn" onClick={() => onPageChange?.(totalPages)}>
                 {totalPages}
               </button>
             </>
           )}
 
-          {/* Next */}
           <button
             type="button"
             className="dt-page-btn dt-page-next"
             disabled={currentPage === totalPages || totalPages === 0}
-            onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+            onClick={() => onPageChange?.(currentPage + 1)}
           >
             Next
           </button>
         </div>
       </div>
 
-      {/* Click-away to close filter popovers */}
-      {openFilter && (
-        <div className="dt-filter-backdrop" onClick={() => setOpenFilter(null)} />
-      )}
+      {openFilter && <div className="dt-filter-backdrop" onClick={() => setOpenFilter(null)} />}
     </div>
   );
 }
-
-DataTable.propTypes = {
-  options: PropTypes.shape({
-    columns: PropTypes.arrayOf(
-      PropTypes.shape({
-        title: PropTypes.string.isRequired,
-        key: PropTypes.string.isRequired,
-        sorting: PropTypes.bool,
-        filter: PropTypes.bool,
-        extraClass: PropTypes.string,
-        width: PropTypes.string,
-      })
-    ).isRequired,
-    rows: PropTypes.array.isRequired,
-  }).isRequired,
-  title: PropTypes.string,
-  subtitle: PropTypes.string,
-  searchPlaceholder: PropTypes.string,
-  exportLabel: PropTypes.string,
-  onExport: PropTypes.func,
-  summaryBar: PropTypes.node,
-  emptyIcon: PropTypes.string,
-  emptyTitle: PropTypes.string,
-  emptySubtitle: PropTypes.string,
-};

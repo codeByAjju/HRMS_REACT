@@ -1,5 +1,7 @@
 import axios from "axios";
 import { GetLocalStorageToken } from "../utils/common.util";
+import store, { Persistor } from "../redux/store";
+import { logoutSuperAdminAction } from "../redux/AuthSlice";
 export const APIrequest = async ({
     method,
     url,
@@ -78,6 +80,19 @@ export const APIrequest = async ({
         return res;
     }
     catch (error) {
+        const errorRes = error.response;
+        if (
+            errorRes &&
+            errorRes?.status &&
+            errorRes?.status === 401
+        ) {
+            console.log("inside if block");
+            // toast.error(errorRes.data.message);
+            let path = "/login";
+            // window.location.reload(path);
+            // removeLocalStorageToken();
+            store.dispatch(logoutSuperAdminAction());
+        }
         console.log(error);
     }
 }
