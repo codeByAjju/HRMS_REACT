@@ -27,7 +27,6 @@ function PrivateLayout() {
                 <Outlet />
               </div>
             </div>
-            <Outlet />
           </div>
         </div>
       </main>

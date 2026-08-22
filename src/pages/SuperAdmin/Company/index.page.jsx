@@ -160,7 +160,6 @@ function SuperAdminCompanyDashboard() {
     })
       .then((res) => {
         if (cancelled) return;
-        console.log("res :",res);
         setCompanies(res?.data?.result.companies);
         setPagination((prev) => ({ ...prev, totalItems: res?.data?.result.pagination.totalItems }));
       })
