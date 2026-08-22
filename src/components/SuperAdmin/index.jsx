@@ -11,3 +11,4 @@ export const SuperAdminAddUser = loadable(() => import("../Form/SuperAdmin/AddUs
 export const UsersList = loadable(() => import("./UsersList/index"));
 export const AdminProfile = loadable(() => import("./AdminProfile/index"));
 export const AdminCharts = loadable(()=> import("./AdminCharts/index"));
+export const AdminCompanyDashboard = loadable(() => import("./AdminCompany/index"));

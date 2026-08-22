@@ -22,22 +22,17 @@ export const authSlice = createSlice({
         ...state,
         userData: {}
       };
-    }
-  },
-
-  logoutSuperAdminAction: (state) => {
-    return {
-      ...state,
-      superAdminAuth: {},
-      userData: {},
-    };
-  },
-
-  updateSuperAdminDataAction: (state, action) => {
-    return {
-      ...state,
-      superAdminAuth: { ...action.payload },
-    };
+    },
+    logoutSuperAdminAction: (state) => {
+      state.superAdminAuth = {};
+      state.userData = {};
+    },
+    updateSuperAdminDataAction: (state, action) => {
+      return {
+        ...state,
+        superAdminAuth: { ...action.payload },
+      };
+    },
   },
 })
 

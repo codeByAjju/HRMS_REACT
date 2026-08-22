@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
-import { useCallback, useEffect } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
 import {
   generatePath,
   matchPath,
   useLocation,
+  useNavigate,
   useParams,
 } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -27,239 +28,181 @@ const roleRedirectMap = {
 function AppLayout({ setRedirectPath, children }) {
   const location = useLocation();
   const params = useParams();
+  const navigate = useNavigate();
 
   const userData = useSelector(getUserAuthData);
-
-  /**
-   * ---------------------------------------------------------
-   * Normalize user role
-   * ---------------------------------------------------------
-   *
-   * Your actual userData:
-   *
-   * {
-   *   role: "admin"
-   * }
-   *
-   * So DON'T use:
-   *
-   * userData.UserRoles[0].Role.name
-   */
   const role = userData?.role?.toLowerCase() || null;
 
   /**
    * ---------------------------------------------------------
-   * Generate dynamic route path
+   * Find active route (memoized across location & params)
    * ---------------------------------------------------------
    */
-  const getGeneratedPath = (routePath) => {
-    try {
-      return generatePath(routePath, params);
-    } catch (error) {
-      logger(error);
-      return routePath;
-    }
-  };
-
-  /**
-   * ---------------------------------------------------------
-   * Find active route
-   * ---------------------------------------------------------
-   *
-   * matchPath is better than:
-   *
-   * routePath === location.pathname
-   *
-   * because it supports dynamic routes.
-   *
-   * Example:
-   *
-   * /user/profile/:id
-   * /user/profile/123
-   */
-  const activeRoute = getCompletePathList().find((route) => {
-    if (!route?.key) {
-      return false;
-    }
-
-    try {
-      const generatedPath = getGeneratedPath(route.key);
-
-      if (generatedPath === location.pathname) {
-        return true;
+  const activeRoute = useMemo(() => {
+    const completePaths = getCompletePathList();
+    return completePaths.find((route) => {
+      if (!route?.key) {
+        return false;
       }
 
-      return Boolean(
-        matchPath(
-          {
-            path: route.key,
-            end: true,
-          },
-          location.pathname
-        )
-      );
-    } catch (error) {
-      logger(error);
-      return false;
-    }
-  });
+      try {
+        let generatedPath = route.key;
+        try {
+          generatedPath = generatePath(route.key, params);
+        } catch (err) {
+          logger(err);
+          generatedPath = route.key;
+        }
 
-  /**
-   * ---------------------------------------------------------
-   * Route information
-   * ---------------------------------------------------------
-   */
+        if (generatedPath === location.pathname) {
+          return true;
+        }
+
+        return Boolean(
+          matchPath(
+            {
+              path: route.key,
+              end: true,
+            },
+            location.pathname
+          )
+        );
+      } catch (error) {
+        logger(error);
+        return false;
+      }
+    });
+  }, [location.pathname, params]);
+
   const isPrivate = activeRoute?.private;
 
-  /**
-   * ---------------------------------------------------------
-   * Check authentication / authorization
-   * ---------------------------------------------------------
-   */
-  const isValid = authDriver(
-    activeRoute,
-    userData,
-    location.pathname
-  );
+  const isValid = useMemo(() => {
+    return authDriver(activeRoute, userData, location.pathname);
+  }, [activeRoute, userData, location.pathname]);
 
-  const isAdminRoute =
-    activeRoute?.adminAccess === true ||
-    location.pathname
-      .replace(/^\/+/, "")
-      .startsWith(baseRoutes.superAdminBaseRoute.replace(/^\/+/, ""));
+  const isAdminRoute = useMemo(() => {
+    return (
+      activeRoute?.adminAccess === true ||
+      location.pathname
+        .replace(/^\/+/, "")
+        .startsWith(baseRoutes.superAdminBaseRoute.replace(/^\/+/, ""))
+    );
+  }, [activeRoute, location.pathname]);
 
-  /**
-   * ---------------------------------------------------------
-   * Check route validity
-   * ---------------------------------------------------------
-   */
-  const checkValid = useCallback(() => {
-    /**
-     * Unknown route
-     *
-     * Don't render children.
-     */
+  // Guard against duplicate toast/redirect execution on re-renders & React StrictMode
+  const redirectedRef = useRef(null);
+
+  useEffect(() => {
     if (!activeRoute) {
       return;
     }
 
-    /**
-     * -------------------------------------------------------
-     * CURRENT ROUTE IS VALID
-     * -------------------------------------------------------
-     */
     if (isValid) {
+      redirectedRef.current = null;
       return;
     }
 
-    /**
-     * -------------------------------------------------------
-     * CURRENT ROUTE IS INVALID
-     * -------------------------------------------------------
-     */
+    const currentKey = `${location.pathname}_${role}_${userData?.token ? "auth" : "unauth"}`;
+    if (redirectedRef.current === currentKey) {
+      return;
+    }
+    redirectedRef.current = currentKey;
 
     /**
-     * Logged-in user/admin trying to access
-     * unauthorized route.
+     * Logged-in user/admin trying to access unauthorized route
      */
     if (userData?.token && role && roleRedirectMap[role]) {
-      /**
-       * Admin trying to access user route
-       */
+      // Admin trying to access user route
       if (
         role === "admin" &&
         activeRoute?.commonRoute === true &&
         activeRoute?.adminAccess !== true
       ) {
-        toast.warning("You are not authorized to access this page.");
-        setRedirectPath(
-          roleRedirectMap.admin
-        );
+        toast.warning("You are not authorized to access this page.", {
+          toastId: "unauthorized-access",
+        });
 
+        const target = roleRedirectMap.admin;
+        if (typeof setRedirectPath === "function") {
+          setRedirectPath(target);
+        }
+        navigate(target, { replace: true });
         return;
       }
 
-      /**
-       * User trying to access admin route
-       */
+      // User trying to access admin route
       if (
         role === "user" &&
         activeRoute?.adminAccess === true
       ) {
-        toast.warning("You are not authorized to access this page.");
+        toast.warning("You are not authorized to access this page.", {
+          toastId: "unauthorized-access",
+        });
 
-        setRedirectPath(
-          roleRedirectMap.user
-        );
-
+        const target = roleRedirectMap.user;
+        if (typeof setRedirectPath === "function") {
+          setRedirectPath(target);
+        }
+        navigate(target, { replace: true });
         return;
       }
 
-      /**
-       * Logged-in user trying to access login/public page.
-       */
+      // Logged-in user trying to access login/public page
       if (activeRoute?.private === false) {
-        setRedirectPath(
-          roleRedirectMap[role]
-        );
-
+        const target = roleRedirectMap[role];
+        if (typeof setRedirectPath === "function") {
+          setRedirectPath(target);
+        }
+        navigate(target, { replace: true });
         return;
       }
 
-      /**
-       * Any other unauthorized private route.
-       */
-      setRedirectPath(
-        roleRedirectMap[role]
-      );
-
+      // Any other unauthorized private route
+      const target = roleRedirectMap[role];
+      if (typeof setRedirectPath === "function") {
+        setRedirectPath(target);
+      }
+      navigate(target, { replace: true });
       return;
     }
 
     /**
-     * -------------------------------------------------------
-     * USER IS NOT LOGGED IN
-     * -------------------------------------------------------
+     * User is NOT logged in and trying to access private route
      */
-
     if (isPrivate === true) {
-      toast.warning("Please login to continue.");
+      toast.warning("Please login to continue.", {
+        toastId: "login-required",
+      });
 
-      setRedirectPath(
-        isAdminRoute
-          ? SuperAdminAccessRoute.LOGIN.path
-          : userAccessRoute.LOGIN.path
-      );
+      const target = isAdminRoute
+        ? SuperAdminAccessRoute.LOGIN.path
+        : userAccessRoute.LOGIN.path;
+
+      if (typeof setRedirectPath === "function") {
+        setRedirectPath(target);
+      }
+      navigate(target, { replace: true });
     }
   }, [
     activeRoute,
     isAdminRoute,
     isPrivate,
     isValid,
+    location.pathname,
+    navigate,
     role,
     setRedirectPath,
     userData?.token,
   ]);
 
   /**
-   * ---------------------------------------------------------
-   * Run authorization whenever pathname changes
-   * ---------------------------------------------------------
-   */
-  useEffect(() => {
-    checkValid();
-  }, [checkValid]);
-
-  /**
-   * ---------------------------------------------------------
    * Render only authorized routes
-   * ---------------------------------------------------------
    */
   return <>{isValid ? children : null}</>;
 }
 
 AppLayout.propTypes = {
-  setRedirectPath: PropTypes.func.isRequired,
+  setRedirectPath: PropTypes.func,
   children: PropTypes.node,
 };
 

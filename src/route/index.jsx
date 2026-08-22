@@ -40,12 +40,17 @@ export const moduleRoutesList = () => {
   return routeArr;
 };
 
+let completePathListCache = null;
+
 export const getCompletePathList = () => {
-  return routesList().reduce((prev, curr) => {
-    prev.push(curr);
-    if (curr.children) {
-      prev.push(...curr.children);
-    }
-    return prev;
-  }, []);
+  if (!completePathListCache) {
+    completePathListCache = routesList().reduce((prev, curr) => {
+      prev.push(curr);
+      if (curr.children) {
+        prev.push(...curr.children);
+      }
+      return prev;
+    }, []);
+  }
+  return completePathListCache;
 };
